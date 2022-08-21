@@ -1,4 +1,4 @@
-create table credit_cards (
+create table if not exists credit_cards (
     id VARCHAR(255) not null,
     name VARCHAR(255),
     cc_number VARCHAR(255),
@@ -11,7 +11,7 @@ create table credit_cards (
     PRIMARY KEY (id)
 );
 
-create table transactions (
+create table if not exists transactions (
     id VARCHAR(255) not null,
     amount float,
     status VARCHAR(255),

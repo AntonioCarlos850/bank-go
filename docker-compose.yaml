@@ -5,7 +5,7 @@ services:
     container_name: app
     build: .
     ports:
-      - "50052:50051"
+      - "8000:8000"
     volumes:
       - .:/go/src/
     extra_hosts:

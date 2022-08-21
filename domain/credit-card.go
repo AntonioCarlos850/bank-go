@@ -7,15 +7,15 @@ import (
 )
 
 type CreditCard struct {
-	ID              string
-	Name            string
-	Number          string
-	ExpirationMonth int32
-	ExpirationYear  int32
-	CVV             int32
-	Balance         float64
-	Limit           float64
-	CreatedAt       time.Time
+	ID              string    `json:"id"`
+	Name            string    `json:"-"`
+	Number          string    `json:"account_number"`
+	ExpirationMonth int32     `json:"-"`
+	ExpirationYear  int32     `json:"-"`
+	CVV             int32     `json:"-"`
+	Balance         float64   `json:"-"`
+	Limit           float64   `json:"-"`
+	CreatedAt       time.Time `json:"-"`
 }
 
 func NewCreditCard() *CreditCard {
