@@ -17,10 +17,11 @@ func NewTransactionRepositoryDb(db *sql.DB) TransactionRepositoryDb {
 
 func (tr TransactionRepositoryDb) GetCreditCard(c domain.CreditCard) (domain.CreditCard, error) {
 	var creditCard domain.CreditCard
-	stmt, err := tr.Db.Prepare("select id, balance, limit from credit_cards where cc_number=$1")
+	stmt, err := tr.Db.Prepare("select id, balance, cc_limit from credit_cards where cc_number=$1")
 	if err != nil {
-		return creditCard, nil
+		return creditCard, err
 	}
+
 	if err = stmt.QueryRow(c.Number).Scan(&creditCard.ID, &creditCard.Balance, &creditCard.Limit); err != nil {
 		return creditCard, errors.New("credit card doesn't exists")
 	}
@@ -73,12 +74,12 @@ func (tr TransactionRepositoryDb) SaveTransaction(c domain.CreditCard, t domain.
 }
 
 func (tr TransactionRepositoryDb) UpdateBalance(c domain.CreditCard) error {
-	stmt, err := tr.Db.Prepare("update into credit_card (balance) values ($1)")
+	stmt, err := tr.Db.Prepare("update credit_cards set balance = $1 where id=$2")
 	if err != nil {
 		return err
 	}
 
-	_, err = stmt.Exec(c.Balance)
+	_, err = stmt.Exec(c.Balance, c.ID)
 	if err != nil {
 		return err
 	}

@@ -29,11 +29,11 @@ func NewTransaction() *Transaction {
 	return t
 }
 
-func (t Transaction) ProcessAndValidate(c *CreditCard) {
+func (t *Transaction) ProcessAndValidate(c *CreditCard) {
 	if t.Amount+c.Balance > c.Limit {
 		t.Status = "Rejected"
 	} else {
 		t.Status = "Approved"
-		c.Balance = c.Balance + t.Amount
+		c.Balance = t.Amount + c.Balance
 	}
 }
