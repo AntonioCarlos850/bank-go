@@ -79,7 +79,7 @@ func transfer(c echo.Context) error {
 
 	tuc := usecase.NewTransactionUseCase(tr)
 
-	_, err := tuc.ProcessTransaction(*transactionDtoFrom)
+	_, cc1, err := tuc.ProcessTransaction(*transactionDtoFrom)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}
@@ -90,10 +90,15 @@ func transfer(c echo.Context) error {
 	transactionDtoTo.Amount = -transferDto.Amount
 	transactionDtoTo.Number = transferDto.To
 
-	_, err = tuc.ProcessTransaction(*transactionDtoTo)
+	_, cc2, err := tuc.ProcessTransaction(*transactionDtoTo)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}
 
-	return c.JSON(201, "transfer made")
+	responseDto := dto.SuccessTransfer{
+		ToBalance:   cc1.Balance,
+		FromBalance: cc2.Balance,
+	}
+
+	return c.JSON(201, responseDto)
 }

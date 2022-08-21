@@ -13,13 +13,13 @@ func NewTransactionUseCase(tr domain.TransactionRepository) TransactionUseCase {
 	return TransactionUseCase{tr}
 }
 
-func (tuc TransactionUseCase) ProcessTransaction(transactionDto dto.TransactionDto) (domain.Transaction, error) {
+func (tuc TransactionUseCase) ProcessTransaction(transactionDto dto.TransactionDto) (domain.Transaction, domain.CreditCard, error) {
 	cc := domain.NewCreditCard()
 	cc.Number = transactionDto.Number
 
 	ccBalanceAndLimit, err := tuc.TransactionRepository.GetCreditCard(*cc)
 	if err != nil {
-		return domain.Transaction{}, err
+		return domain.Transaction{}, domain.CreditCard{}, err
 	}
 
 	t := tuc.newTransaction(transactionDto, ccBalanceAndLimit)
@@ -27,10 +27,10 @@ func (tuc TransactionUseCase) ProcessTransaction(transactionDto dto.TransactionD
 
 	err = tuc.TransactionRepository.SaveTransaction(ccBalanceAndLimit, *t)
 	if err != nil {
-		return domain.Transaction{}, err
+		return domain.Transaction{}, domain.CreditCard{}, err
 	}
 
-	return *t, nil
+	return *t, ccBalanceAndLimit, nil
 }
 
 func (tuc TransactionUseCase) newTransaction(transaction dto.TransactionDto, cc domain.CreditCard) *domain.Transaction {
